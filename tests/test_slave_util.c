@@ -156,10 +156,10 @@ static int build_read_request(uint8_t fc, uint16_t addr, uint16_t nb)
 {
     _read_buf[0] = 1;
     _read_buf[1] = fc;
-    _read_buf[2] = addr >> 8;
-    _read_buf[3] = addr & 0xFF;
-    _read_buf[4] = nb >> 8;
-    _read_buf[5] = nb & 0xFF;
+    _read_buf[2] = (uint8_t)(addr >> 8);
+    _read_buf[3] = (uint8_t)(addr & 0xFF);
+    _read_buf[4] = (uint8_t)(nb >> 8);
+    _read_buf[5] = (uint8_t)(nb & 0xFF);
     return 6;
 }
 
@@ -167,10 +167,10 @@ static int build_write_single_request(uint8_t fc, uint16_t addr, uint16_t value)
 {
     _read_buf[0] = 1;
     _read_buf[1] = fc;
-    _read_buf[2] = addr >> 8;
-    _read_buf[3] = addr & 0xFF;
-    _read_buf[4] = value >> 8;
-    _read_buf[5] = value & 0xFF;
+    _read_buf[2] = (uint8_t)(addr >> 8);
+    _read_buf[3] = (uint8_t)(addr & 0xFF);
+    _read_buf[4] = (uint8_t)(value >> 8);
+    _read_buf[5] = (uint8_t)(value & 0xFF);
     return 6;
 }
 
@@ -178,14 +178,14 @@ static int build_write_multiple_request(uint8_t fc, uint16_t addr, uint16_t nb, 
 {
     _read_buf[0] = 1;
     _read_buf[1] = fc;
-    _read_buf[2] = addr >> 8;
-    _read_buf[3] = addr & 0xFF;
-    _read_buf[4] = nb >> 8;
-    _read_buf[5] = nb & 0xFF;
-    _read_buf[6] = nb * 2;
+    _read_buf[2] = (uint8_t)(addr >> 8);
+    _read_buf[3] = (uint8_t)(addr & 0xFF);
+    _read_buf[4] = (uint8_t)(nb >> 8);
+    _read_buf[5] = (uint8_t)(nb & 0xFF);
+    _read_buf[6] = (uint8_t)(nb * 2);
     for (int i = 0; i < nb; i++) {
-        _read_buf[7 + i * 2] = values[i] >> 8;
-        _read_buf[7 + i * 2 + 1] = values[i] & 0xFF;
+        _read_buf[7 + i * 2] = (uint8_t)(values[i] >> 8);
+        _read_buf[7 + i * 2 + 1] = (uint8_t)(values[i] & 0xFF);
     }
     return 7 + nb * 2;
 }
@@ -194,12 +194,12 @@ static int build_mask_write_request(uint16_t addr, uint16_t and_mask, uint16_t o
 {
     _read_buf[0] = 1;
     _read_buf[1] = AGILE_MODBUS_FC_MASK_WRITE_REGISTER;
-    _read_buf[2] = addr >> 8;
-    _read_buf[3] = addr & 0xFF;
-    _read_buf[4] = and_mask >> 8;
-    _read_buf[5] = and_mask & 0xFF;
-    _read_buf[6] = or_mask >> 8;
-    _read_buf[7] = or_mask & 0xFF;
+    _read_buf[2] = (uint8_t)(addr >> 8);
+    _read_buf[3] = (uint8_t)(addr & 0xFF);
+    _read_buf[4] = (uint8_t)(and_mask >> 8);
+    _read_buf[5] = (uint8_t)(and_mask & 0xFF);
+    _read_buf[6] = (uint8_t)(or_mask >> 8);
+    _read_buf[7] = (uint8_t)(or_mask & 0xFF);
     return 8;
 }
 
@@ -209,18 +209,18 @@ static int build_write_and_read_request(uint16_t read_addr, uint16_t read_nb,
 {
     _read_buf[0] = 1;
     _read_buf[1] = AGILE_MODBUS_FC_WRITE_AND_READ_REGISTERS;
-    _read_buf[2] = read_addr >> 8;
-    _read_buf[3] = read_addr & 0xFF;
-    _read_buf[4] = read_nb >> 8;
-    _read_buf[5] = read_nb & 0xFF;
-    _read_buf[6] = write_addr >> 8;
-    _read_buf[7] = write_addr & 0xFF;
-    _read_buf[8] = write_nb >> 8;
-    _read_buf[9] = write_nb & 0xFF;
-    _read_buf[10] = write_nb * 2;
+    _read_buf[2] = (uint8_t)(read_addr >> 8);
+    _read_buf[3] = (uint8_t)(read_addr & 0xFF);
+    _read_buf[4] = (uint8_t)(read_nb >> 8);
+    _read_buf[5] = (uint8_t)(read_nb & 0xFF);
+    _read_buf[6] = (uint8_t)(write_addr >> 8);
+    _read_buf[7] = (uint8_t)(write_addr & 0xFF);
+    _read_buf[8] = (uint8_t)(write_nb >> 8);
+    _read_buf[9] = (uint8_t)(write_nb & 0xFF);
+    _read_buf[10] = (uint8_t)(write_nb * 2);
     for (int i = 0; i < write_nb; i++) {
-        _read_buf[11 + i * 2] = write_values[i] >> 8;
-        _read_buf[11 + i * 2 + 1] = write_values[i] & 0xFF;
+        _read_buf[11 + i * 2] = (uint8_t)(write_values[i] >> 8);
+        _read_buf[11 + i * 2 + 1] = (uint8_t)(write_values[i] & 0xFF);
     }
     return 11 + write_nb * 2;
 }
@@ -237,8 +237,8 @@ static void append_crc(int pdu_len)
                 crc >>= 1;
         }
     }
-    _read_buf[pdu_len] = crc & 0xFF;
-    _read_buf[pdu_len + 1] = crc >> 8;
+    _read_buf[pdu_len] = (uint8_t)(crc & 0xFF);
+    _read_buf[pdu_len + 1] = (uint8_t)(crc >> 8);
 }
 
 static int handle_request(int pdu_len, const agile_modbus_slave_util_t *slave_util)
